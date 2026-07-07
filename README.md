@@ -28,18 +28,11 @@ A local [Model Context Protocol](https://modelcontextprotocol.io) server (stdio)
 
 ## Install
 
-```bash
-git clone https://github.com/andrelaptenok/redmine-mcp-stdio.git
-cd redmine-mcp-stdio
-npm install
-npm run build
-```
+No manual install needed. The client launches the server on demand with `npx`, which
+downloads it on first run and caches it after. Just add the config for your client under
+[Connect](#connect).
 
-`npm run build` produces `build/index.js` (the executable server). Get its absolute path, which you'll need for the client config:
-
-```bash
-echo "$(pwd)/build/index.js"
-```
+Prefer to run from a local clone? See [Development](#development).
 
 ## Get a Redmine API key
 
@@ -62,8 +55,8 @@ Edit `~/.cursor/mcp.json` (global) or `.cursor/mcp.json` in a project root:
 {
   "mcpServers": {
     "redmine": {
-      "command": "node",
-      "args": ["/absolute/path/to/redmine-mcp-stdio/build/index.js"],
+      "command": "npx",
+      "args": ["-y", "redmine-mcp-stdio"],
       "env": {
         "REDMINE_URL": "https://redmine.your-company.com",
         "REDMINE_API_KEY": "your_key"
@@ -84,8 +77,8 @@ Edit `.vscode/mcp.json` in your workspace (or your user `mcp.json`). Note the to
   "servers": {
     "redmine": {
       "type": "stdio",
-      "command": "node",
-      "args": ["/absolute/path/to/redmine-mcp-stdio/build/index.js"],
+      "command": "npx",
+      "args": ["-y", "redmine-mcp-stdio"],
       "env": {
         "REDMINE_URL": "https://redmine.your-company.com",
         "REDMINE_API_KEY": "your_key"
@@ -101,7 +94,7 @@ Edit `.vscode/mcp.json` in your workspace (or your user `mcp.json`). Note the to
 claude mcp add redmine \
   --env REDMINE_URL=https://redmine.your-company.com \
   --env REDMINE_API_KEY=your_key \
-  -- node /absolute/path/to/redmine-mcp-stdio/build/index.js
+  -- npx -y redmine-mcp-stdio
 ```
 
 Or edit `~/.claude.json` / the project `.mcp.json` directly (same shape as Claude Desktop below).
@@ -114,8 +107,8 @@ Edit `claude_desktop_config.json` (macOS: `~/Library/Application Support/Claude/
 {
   "mcpServers": {
     "redmine": {
-      "command": "node",
-      "args": ["/absolute/path/to/redmine-mcp-stdio/build/index.js"],
+      "command": "npx",
+      "args": ["-y", "redmine-mcp-stdio"],
       "env": {
         "REDMINE_URL": "https://redmine.your-company.com",
         "REDMINE_API_KEY": "your_key"
@@ -133,12 +126,12 @@ Add a server table to `~/.codex/config.toml`:
 
 ```toml
 [mcp_servers.redmine]
-command = "node"
-args = ["/absolute/path/to/redmine-mcp-stdio/build/index.js"]
+command = "npx"
+args = ["-y", "redmine-mcp-stdio"]
 env = { REDMINE_URL = "https://redmine.your-company.com", REDMINE_API_KEY = "your_key" }
 ```
 
-If node is installed via nvm, use the full path from `which node` as `command`.
+If node is installed via nvm, use the full path from `which npx` as `command`.
 
 ### Windsurf
 
@@ -148,8 +141,8 @@ Edit `~/.codeium/windsurf/mcp_config.json`:
 {
   "mcpServers": {
     "redmine": {
-      "command": "node",
-      "args": ["/absolute/path/to/redmine-mcp-stdio/build/index.js"],
+      "command": "npx",
+      "args": ["-y", "redmine-mcp-stdio"],
       "env": {
         "REDMINE_URL": "https://redmine.your-company.com",
         "REDMINE_API_KEY": "your_key"
@@ -169,8 +162,8 @@ In the Cline pane, click the **MCP Servers** icon and choose **Configure MCP Ser
 {
   "mcpServers": {
     "redmine": {
-      "command": "node",
-      "args": ["/absolute/path/to/redmine-mcp-stdio/build/index.js"],
+      "command": "npx",
+      "args": ["-y", "redmine-mcp-stdio"],
       "env": {
         "REDMINE_URL": "https://redmine.your-company.com",
         "REDMINE_API_KEY": "your_key"
@@ -189,8 +182,8 @@ Zed calls MCP servers **context servers**. Open the command palette and run **ze
   "context_servers": {
     "redmine": {
       "source": "custom",
-      "command": "node",
-      "args": ["/absolute/path/to/redmine-mcp-stdio/build/index.js"],
+      "command": "npx",
+      "args": ["-y", "redmine-mcp-stdio"],
       "env": {
         "REDMINE_URL": "https://redmine.your-company.com",
         "REDMINE_API_KEY": "your_key"
@@ -207,8 +200,8 @@ Zed restarts the server on save, so no editor reload is needed.
 **Settings > Tools > AI Assistant > Model Context Protocol (MCP) > Add:**
 
 - Type: **stdio**
-- Command: `node` (if node is installed via nvm, use the full path from `which node`)
-- Arguments: `/absolute/path/to/redmine-mcp-stdio/build/index.js`
+- Command: `npx` (if node is installed via nvm, use the full path from `which npx`)
+- Arguments: `-y redmine-mcp-stdio`
 - Environment:
   - `REDMINE_URL=https://redmine.your-company.com`
   - `REDMINE_API_KEY=your_key`
@@ -218,14 +211,14 @@ Enable _"Automatically enable new and changed MCP servers"_, then **Apply**. Cli
 ## Verify locally (optional)
 
 ```bash
-REDMINE_URL=https://redmine.your-company.com REDMINE_API_KEY=your_key node build/index.js
+REDMINE_URL=https://redmine.your-company.com REDMINE_API_KEY=your_key npx -y redmine-mcp-stdio
 ```
 
 The process should start and wait silently on stdio (Ctrl+C to exit).
 
 ## Troubleshooting
 
-- **`Failed to connect` / server won't start:** the `command` must be a valid `node`. If node is installed via nvm, a bare `node` may not resolve in the client's environment. Use the full path from `which node` as the command.
+- **`Failed to connect` / server won't start:** the `command` must resolve in the client's environment. If node is installed via nvm, a bare `npx` may not be found. Use the full path from `which npx` as the command.
 - **`Missing REDMINE_URL or REDMINE_API_KEY`:** the `env` block wasn't passed. Double-check it's in the MCP config, not your shell.
 - **`Redmine 401` / `403`:** bad API key, or the key's user lacks permission for that action.
 - **`Redmine 404`:** the issue/project id doesn't exist, or `REDMINE_URL` points at the wrong host.

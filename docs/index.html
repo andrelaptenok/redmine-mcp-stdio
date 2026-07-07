@@ -319,8 +319,8 @@
       </div>
       <div class="install">
         <span class="prompt">$</span>
-        <code id="install-cmd">git clone https://github.com/andrelaptenok/redmine-mcp-stdio.git &amp;&amp; cd redmine-mcp-stdio &amp;&amp; npm install &amp;&amp; npm run build</code>
-        <button class="copy" data-copy="git clone https://github.com/andrelaptenok/redmine-mcp-stdio.git && cd redmine-mcp-stdio && npm install && npm run build">Copy</button>
+        <code id="install-cmd">REDMINE_URL=https://redmine.your-company.com REDMINE_API_KEY=your_key npx -y redmine-mcp-stdio</code>
+        <button class="copy" data-copy="REDMINE_URL=https://redmine.your-company.com REDMINE_API_KEY=your_key npx -y redmine-mcp-stdio">Copy</button>
       </div>
     </div>
   </header>
@@ -376,24 +376,20 @@
   <section id="install">
     <div class="wrap">
       <span class="eyebrow">Install</span>
-      <h2>Clone, install, build</h2>
-      <p class="lead">Requires Node 20+. The build produces <code style="font-family:var(--mono);font-size:14px">build/index.js</code>, the executable server.</p>
+      <h2>No install needed</h2>
+      <p class="lead">The client launches the server with <code style="font-family:var(--mono);font-size:14px">npx</code> on first use, so there's nothing to clone or build. You only need Node 20+. Prefer to run from a local clone for development? Build it from source:</p>
       <div class="codeblock">
         <div class="bar"><span class="fname">terminal</span>
           <button class="copy" data-copy="git clone https://github.com/andrelaptenok/redmine-mcp-stdio.git
 cd redmine-mcp-stdio
 npm install
-npm run build
-echo &quot;$(pwd)/build/index.js&quot;   # absolute path for your client config">Copy</button>
+npm run build">Copy</button>
         </div>
-<pre><span class="tok-cmt"># clone &amp; build</span>
+<pre><span class="tok-cmt"># from source, for development</span>
 git clone https://github.com/andrelaptenok/redmine-mcp-stdio.git
 cd redmine-mcp-stdio
 npm install
-npm run build
-
-<span class="tok-cmt"># grab the absolute path you'll paste into the client config</span>
-echo <span class="tok-str">"$(pwd)/build/index.js"</span></pre>
+npm run build</pre>
       </div>
     </div>
   </section>
@@ -423,8 +419,8 @@ echo <span class="tok-str">"$(pwd)/build/index.js"</span></pre>
             <button class="copy" data-copy='{
   "mcpServers": {
     "redmine": {
-      "command": "node",
-      "args": ["/absolute/path/to/redmine-mcp-stdio/build/index.js"],
+      "command": "npx",
+      "args": ["-y", "redmine-mcp-stdio"],
       "env": {
         "REDMINE_URL": "https://redmine.your-company.com",
         "REDMINE_API_KEY": "your_key"
@@ -436,8 +432,8 @@ echo <span class="tok-str">"$(pwd)/build/index.js"</span></pre>
 <pre>{
   <span class="tok-key">"mcpServers"</span>: {
     <span class="tok-key">"redmine"</span>: {
-      <span class="tok-key">"command"</span>: <span class="tok-str">"node"</span>,
-      <span class="tok-key">"args"</span>: [<span class="tok-str">"/absolute/path/to/redmine-mcp-stdio/build/index.js"</span>],
+      <span class="tok-key">"command"</span>: <span class="tok-str">"npx"</span>,
+      <span class="tok-key">"args"</span>: [<span class="tok-str">"-y"</span>, <span class="tok-str">"redmine-mcp-stdio"</span>],
       <span class="tok-key">"env"</span>: {
         <span class="tok-key">"REDMINE_URL"</span>: <span class="tok-str">"https://redmine.your-company.com"</span>,
         <span class="tok-key">"REDMINE_API_KEY"</span>: <span class="tok-str">"your_key"</span>
@@ -456,8 +452,8 @@ echo <span class="tok-str">"$(pwd)/build/index.js"</span></pre>
   "servers": {
     "redmine": {
       "type": "stdio",
-      "command": "node",
-      "args": ["/absolute/path/to/redmine-mcp-stdio/build/index.js"],
+      "command": "npx",
+      "args": ["-y", "redmine-mcp-stdio"],
       "env": {
         "REDMINE_URL": "https://redmine.your-company.com",
         "REDMINE_API_KEY": "your_key"
@@ -470,8 +466,8 @@ echo <span class="tok-str">"$(pwd)/build/index.js"</span></pre>
   <span class="tok-key">"servers"</span>: {
     <span class="tok-key">"redmine"</span>: {
       <span class="tok-key">"type"</span>: <span class="tok-str">"stdio"</span>,
-      <span class="tok-key">"command"</span>: <span class="tok-str">"node"</span>,
-      <span class="tok-key">"args"</span>: [<span class="tok-str">"/absolute/path/to/redmine-mcp-stdio/build/index.js"</span>],
+      <span class="tok-key">"command"</span>: <span class="tok-str">"npx"</span>,
+      <span class="tok-key">"args"</span>: [<span class="tok-str">"-y"</span>, <span class="tok-str">"redmine-mcp-stdio"</span>],
       <span class="tok-key">"env"</span>: {
         <span class="tok-key">"REDMINE_URL"</span>: <span class="tok-str">"https://redmine.your-company.com"</span>,
         <span class="tok-key">"REDMINE_API_KEY"</span>: <span class="tok-str">"your_key"</span>
@@ -489,12 +485,12 @@ echo <span class="tok-str">"$(pwd)/build/index.js"</span></pre>
             <button class="copy" data-copy="claude mcp add redmine \
   --env REDMINE_URL=https://redmine.your-company.com \
   --env REDMINE_API_KEY=your_key \
-  -- node /absolute/path/to/redmine-mcp-stdio/build/index.js">Copy</button>
+  -- npx -y redmine-mcp-stdio">Copy</button>
           </div>
 <pre>claude mcp add redmine <span class="tok-flag">\</span>
   <span class="tok-flag">--env</span> REDMINE_URL=<span class="tok-str">https://redmine.your-company.com</span> <span class="tok-flag">\</span>
   <span class="tok-flag">--env</span> REDMINE_API_KEY=<span class="tok-str">your_key</span> <span class="tok-flag">\</span>
-  -- node <span class="tok-str">/absolute/path/to/redmine-mcp-stdio/build/index.js</span></pre>
+  -- npx <span class="tok-str">-y redmine-mcp-stdio</span></pre>
         </div>
       </div>
 
@@ -504,8 +500,8 @@ echo <span class="tok-str">"$(pwd)/build/index.js"</span></pre>
             <button class="copy" data-copy='{
   "mcpServers": {
     "redmine": {
-      "command": "node",
-      "args": ["/absolute/path/to/redmine-mcp-stdio/build/index.js"],
+      "command": "npx",
+      "args": ["-y", "redmine-mcp-stdio"],
       "env": {
         "REDMINE_URL": "https://redmine.your-company.com",
         "REDMINE_API_KEY": "your_key"
@@ -517,8 +513,8 @@ echo <span class="tok-str">"$(pwd)/build/index.js"</span></pre>
 <pre>{
   <span class="tok-key">"mcpServers"</span>: {
     <span class="tok-key">"redmine"</span>: {
-      <span class="tok-key">"command"</span>: <span class="tok-str">"node"</span>,
-      <span class="tok-key">"args"</span>: [<span class="tok-str">"/absolute/path/to/redmine-mcp-stdio/build/index.js"</span>],
+      <span class="tok-key">"command"</span>: <span class="tok-str">"npx"</span>,
+      <span class="tok-key">"args"</span>: [<span class="tok-str">"-y"</span>, <span class="tok-str">"redmine-mcp-stdio"</span>],
       <span class="tok-key">"env"</span>: {
         <span class="tok-key">"REDMINE_URL"</span>: <span class="tok-str">"https://redmine.your-company.com"</span>,
         <span class="tok-key">"REDMINE_API_KEY"</span>: <span class="tok-str">"your_key"</span>
@@ -534,16 +530,16 @@ echo <span class="tok-str">"$(pwd)/build/index.js"</span></pre>
         <div class="codeblock">
           <div class="bar"><span class="fname">~/.codex/config.toml</span>
             <button class="copy" data-copy='[mcp_servers.redmine]
-command = "node"
-args = ["/absolute/path/to/redmine-mcp-stdio/build/index.js"]
+command = "npx"
+args = ["-y", "redmine-mcp-stdio"]
 env = { REDMINE_URL = "https://redmine.your-company.com", REDMINE_API_KEY = "your_key" }'>Copy</button>
           </div>
 <pre>[mcp_servers.redmine]
-<span class="tok-key">command</span> = <span class="tok-str">"node"</span>
-<span class="tok-key">args</span> = [<span class="tok-str">"/absolute/path/to/redmine-mcp-stdio/build/index.js"</span>]
+<span class="tok-key">command</span> = <span class="tok-str">"npx"</span>
+<span class="tok-key">args</span> = [<span class="tok-str">"-y"</span>, <span class="tok-str">"redmine-mcp-stdio"</span>]
 <span class="tok-key">env</span> = { REDMINE_URL = <span class="tok-str">"https://redmine.your-company.com"</span>, REDMINE_API_KEY = <span class="tok-str">"your_key"</span> }</pre>
         </div>
-        <p class="note">Add the table to <code>~/.codex/config.toml</code>. If <code>node</code> is installed via nvm, use the full path from <code>which node</code> as <b>command</b>.</p>
+        <p class="note">Add the table to <code>~/.codex/config.toml</code>. If node is installed via nvm, use the full path from <code>which npx</code> as <b>command</b>.</p>
       </div>
 
       <div class="panel-code" data-panel="ws">
@@ -552,8 +548,8 @@ env = { REDMINE_URL = "https://redmine.your-company.com", REDMINE_API_KEY = "you
             <button class="copy" data-copy='{
   "mcpServers": {
     "redmine": {
-      "command": "node",
-      "args": ["/absolute/path/to/redmine-mcp-stdio/build/index.js"],
+      "command": "npx",
+      "args": ["-y", "redmine-mcp-stdio"],
       "env": {
         "REDMINE_URL": "https://redmine.your-company.com",
         "REDMINE_API_KEY": "your_key"
@@ -565,8 +561,8 @@ env = { REDMINE_URL = "https://redmine.your-company.com", REDMINE_API_KEY = "you
 <pre>{
   <span class="tok-key">"mcpServers"</span>: {
     <span class="tok-key">"redmine"</span>: {
-      <span class="tok-key">"command"</span>: <span class="tok-str">"node"</span>,
-      <span class="tok-key">"args"</span>: [<span class="tok-str">"/absolute/path/to/redmine-mcp-stdio/build/index.js"</span>],
+      <span class="tok-key">"command"</span>: <span class="tok-str">"npx"</span>,
+      <span class="tok-key">"args"</span>: [<span class="tok-str">"-y"</span>, <span class="tok-str">"redmine-mcp-stdio"</span>],
       <span class="tok-key">"env"</span>: {
         <span class="tok-key">"REDMINE_URL"</span>: <span class="tok-str">"https://redmine.your-company.com"</span>,
         <span class="tok-key">"REDMINE_API_KEY"</span>: <span class="tok-str">"your_key"</span>
@@ -584,8 +580,8 @@ env = { REDMINE_URL = "https://redmine.your-company.com", REDMINE_API_KEY = "you
             <button class="copy" data-copy='{
   "mcpServers": {
     "redmine": {
-      "command": "node",
-      "args": ["/absolute/path/to/redmine-mcp-stdio/build/index.js"],
+      "command": "npx",
+      "args": ["-y", "redmine-mcp-stdio"],
       "env": {
         "REDMINE_URL": "https://redmine.your-company.com",
         "REDMINE_API_KEY": "your_key"
@@ -597,8 +593,8 @@ env = { REDMINE_URL = "https://redmine.your-company.com", REDMINE_API_KEY = "you
 <pre>{
   <span class="tok-key">"mcpServers"</span>: {
     <span class="tok-key">"redmine"</span>: {
-      <span class="tok-key">"command"</span>: <span class="tok-str">"node"</span>,
-      <span class="tok-key">"args"</span>: [<span class="tok-str">"/absolute/path/to/redmine-mcp-stdio/build/index.js"</span>],
+      <span class="tok-key">"command"</span>: <span class="tok-str">"npx"</span>,
+      <span class="tok-key">"args"</span>: [<span class="tok-str">"-y"</span>, <span class="tok-str">"redmine-mcp-stdio"</span>],
       <span class="tok-key">"env"</span>: {
         <span class="tok-key">"REDMINE_URL"</span>: <span class="tok-str">"https://redmine.your-company.com"</span>,
         <span class="tok-key">"REDMINE_API_KEY"</span>: <span class="tok-str">"your_key"</span>
@@ -617,8 +613,8 @@ env = { REDMINE_URL = "https://redmine.your-company.com", REDMINE_API_KEY = "you
   "context_servers": {
     "redmine": {
       "source": "custom",
-      "command": "node",
-      "args": ["/absolute/path/to/redmine-mcp-stdio/build/index.js"],
+      "command": "npx",
+      "args": ["-y", "redmine-mcp-stdio"],
       "env": {
         "REDMINE_URL": "https://redmine.your-company.com",
         "REDMINE_API_KEY": "your_key"
@@ -631,8 +627,8 @@ env = { REDMINE_URL = "https://redmine.your-company.com", REDMINE_API_KEY = "you
   <span class="tok-key">"context_servers"</span>: {
     <span class="tok-key">"redmine"</span>: {
       <span class="tok-key">"source"</span>: <span class="tok-str">"custom"</span>,
-      <span class="tok-key">"command"</span>: <span class="tok-str">"node"</span>,
-      <span class="tok-key">"args"</span>: [<span class="tok-str">"/absolute/path/to/redmine-mcp-stdio/build/index.js"</span>],
+      <span class="tok-key">"command"</span>: <span class="tok-str">"npx"</span>,
+      <span class="tok-key">"args"</span>: [<span class="tok-str">"-y"</span>, <span class="tok-str">"redmine-mcp-stdio"</span>],
       <span class="tok-key">"env"</span>: {
         <span class="tok-key">"REDMINE_URL"</span>: <span class="tok-str">"https://redmine.your-company.com"</span>,
         <span class="tok-key">"REDMINE_API_KEY"</span>: <span class="tok-str">"your_key"</span>
@@ -648,8 +644,8 @@ env = { REDMINE_URL = "https://redmine.your-company.com", REDMINE_API_KEY = "you
         <div class="codeblock">
           <div class="bar"><span class="fname">Settings &gt; Tools &gt; AI Assistant &gt; MCP</span></div>
 <pre><span class="tok-cmt"># Add a server of type: stdio</span>
-Command:      node        <span class="tok-cmt"># nvm users: full path from `which node`</span>
-Arguments:    /absolute/path/to/redmine-mcp-stdio/build/index.js
+Command:      npx         <span class="tok-cmt"># nvm users: full path from `which npx`</span>
+Arguments:    -y redmine-mcp-stdio
 Environment:  REDMINE_URL=https://redmine.your-company.com
               REDMINE_API_KEY=your_key</pre>
         </div>
