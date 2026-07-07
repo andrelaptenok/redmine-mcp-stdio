@@ -31,6 +31,30 @@ It does not open a network port and does not accept connections from third parti
   hostile or oversized body.
 - **Minimal dependencies.** Runtime deps are limited to the MCP SDK and Zod.
 
+## Supply chain
+
+- **Two direct runtime dependencies:** the official `@modelcontextprotocol/sdk` and `zod`.
+- **Trusted publishing.** Releases are published to npm from GitHub Actions via OIDC
+  (no long-lived tokens) and carry build **provenance**, so each version is
+  cryptographically traceable to this repository and workflow.
+- **No install scripts.** Nothing in the dependency tree runs `pre/post/install` hooks,
+  and `npm audit` reports **0 known vulnerabilities**.
+
+### About supply-chain scanner alerts
+
+Automated scanners (e.g. Socket) flag a number of _capabilities_ in the dependency
+tree. None are known vulnerabilities; they come from two expected sources:
+
+- **The MCP SDK's HTTP stack.** The SDK ships `express`, `cors`, `ajv`, `eventsource`
+  and friends as dependencies for its HTTP/SSE transports. **This server uses the
+  `stdio` transport only** and never loads them, but npm still installs the whole tree,
+  so scanners report `network access`, `uses eval` (ajv schema codegen), `shell access`
+  (`cross-spawn`), `dynamic require`, and `unmaintained` on those transitive packages.
+- **This server's own, intentional capabilities:** network access (HTTPS requests to
+  your Redmine host), environment-variable access (reading `REDMINE_URL` /
+  `REDMINE_API_KEY`), and a single filesystem read of its own `package.json` to report
+  the version. All three are documented above and are core to the tool's function.
+
 ## Operator guidance
 
 - Use a Redmine API key scoped to a user with only the permissions you need.
