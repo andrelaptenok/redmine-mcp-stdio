@@ -15,7 +15,7 @@ const formatRefs = (refs: RedmineRef[]): string =>
 export function registerEnumerationTools(server: McpServer, client: RedmineClient): void {
   server.tool(
     "list_enumerations",
-    "List trackers, statuses, priorities and time-entry activities with their ids",
+    "List trackers, statuses, priorities and time-entry activities with their IDs",
     {},
     async () =>
       guard(async () => {

@@ -24,7 +24,7 @@ A local [Model Context Protocol](https://modelcontextprotocol.io) server (stdio)
 | `add_comment`       | Add a note to an issue                            | `id`, `notes`                                                                                      |
 | `log_time`          | Log a time entry on an issue/project              | `issue_id` or `project_id`, `hours`, `activity_id`, `comments`, `spent_on`                         |
 | `list_time_entries` | List time entries, filtered                       | `issue_id`, `project_id`, `user_id`, `from`, `to`, `limit`, `offset`                               |
-| `list_enumerations` | Ids of trackers/statuses/priorities/activities    | none                                                                                               |
+| `list_enumerations` | IDs of trackers/statuses/priorities/activities    | none                                                                                               |
 
 ## Install
 
@@ -241,8 +241,8 @@ The process should start and wait silently on stdio (Ctrl+C to exit).
 
 ## Architecture
 
-Layered, with a single HTTP client injected into each tool group so tools never
-touch transport or `process.env` directly:
+The code is organized in layers, with a single HTTP client injected into each tool
+group so that tools never touch transport or `process.env` directly:
 
 ```
 src/
