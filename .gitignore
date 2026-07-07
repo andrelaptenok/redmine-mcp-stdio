@@ -8,3 +8,6 @@ build/
 
 # FUSE leftovers from deleting files that were still open (sshfs / VM shares)
 .fuse_hidden*
+
+# Local-only promo drafts (never publish)
+PROMO.md
