@@ -7,7 +7,7 @@ on:
 
 permissions:
   contents: write # create the GitHub Release
-  id-token: write # npm publish --provenance
+  id-token: write # OIDC for npm trusted publishing
 
 jobs:
   release:
@@ -21,26 +21,19 @@ jobs:
           registry-url: "https://registry.npmjs.org"
           cache: npm
 
+      # Trusted publishing (OIDC) requires npm >= 11.5.1
+      - run: npm install -g npm@latest
+
       - run: npm ci
       - run: npm run check
 
-      - name: Detect npm token
-        id: npm
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: echo "present=${NPM_TOKEN:+yes}" >> "$GITHUB_OUTPUT"
-
+      # No NODE_AUTH_TOKEN: npm authenticates via OIDC and attaches provenance.
       - name: Publish to npm
-        if: steps.npm.outputs.present == 'yes'
-        run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Skip npm publish (no NPM_TOKEN)
-        if: steps.npm.outputs.present != 'yes'
-        run: echo "::notice::NPM_TOKEN is not set — skipping npm publish. Add the secret to enable it."
+        run: npm publish
 
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release create "${GITHUB_REF_NAME}" --generate-notes --verify-tag
+        run: |
+          gh release view "${GITHUB_REF_NAME}" >/dev/null 2>&1 \
+            || gh release create "${GITHUB_REF_NAME}" --generate-notes --verify-tag
