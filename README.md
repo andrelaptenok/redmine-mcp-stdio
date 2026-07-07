@@ -9,7 +9,7 @@
 
 A local [Model Context Protocol](https://modelcontextprotocol.io) server (stdio) for [Redmine](https://www.redmine.org). Point an MCP client at it (Cursor, VS Code, Claude, Codex, Windsurf, Cline, Zed, JetBrains AI and others) and work with Redmine issues, projects and time entries straight from the editor.
 
-[![CI](https://github.com/andrelaptenok/redmine-mcp-stdio/actions/workflows/ci.yml/badge.svg)](https://github.com/andrelaptenok/redmine-mcp-stdio/actions/workflows/ci.yml) ![license](https://img.shields.io/badge/license-MIT-green) ![node](https://img.shields.io/badge/node-%3E%3D18-blue)
+[![CI](https://github.com/andrelaptenok/redmine-mcp-stdio/actions/workflows/ci.yml/badge.svg)](https://github.com/andrelaptenok/redmine-mcp-stdio/actions/workflows/ci.yml) ![license](https://img.shields.io/badge/license-MIT-green) ![node](https://img.shields.io/badge/node-%3E%3D20-blue)
 
 ## Tools
 
