@@ -1,0 +1,10 @@
+node_modules/
+build/
+.env
+.env.*
+!.env.example
+.idea/
+.ai/
+
+# FUSE leftovers from deleting files that were still open (sshfs / VM shares)
+.fuse_hidden*

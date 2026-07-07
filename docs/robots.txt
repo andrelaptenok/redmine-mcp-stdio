@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://andrelaptenok.github.io/redmine-mcp-stdio/sitemap.xml

@@ -1,0 +1,703 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>redmine-mcp-stdio: Redmine for Cursor, Claude &amp; any MCP client</title>
+  <meta name="description" content="Open-source MCP server for Redmine. Connect Cursor, VS Code, Claude, Windsurf, Zed or any MCP client to your tracker and handle issues, projects and time entries from the editor. TypeScript, MIT." />
+  <link rel="canonical" href="https://andrelaptenok.github.io/redmine-mcp-stdio/" />
+  <meta name="author" content="Andrei Laptsenak" />
+  <meta name="theme-color" content="#0b0d12" />
+  <link rel="icon" href="assets/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png" />
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
+  <meta name="robots" content="index, follow" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="redmine-mcp-stdio" />
+  <meta property="og:title" content="redmine-mcp-stdio: Redmine for any MCP client" />
+  <meta property="og:description" content="Connect Cursor, VS Code, Claude, Windsurf, Zed or any MCP client to Redmine and handle issues, projects and time entries from the editor." />
+  <meta property="og:url" content="https://andrelaptenok.github.io/redmine-mcp-stdio/" />
+  <meta property="og:image" content="https://andrelaptenok.github.io/redmine-mcp-stdio/assets/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="redmine-mcp-stdio: Redmine for any MCP client" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="redmine-mcp-stdio: Redmine for any MCP client" />
+  <meta name="twitter:description" content="Bring Redmine into Cursor, VS Code, Claude, Windsurf, Zed and any other MCP client. 10 tools for issues, projects and time tracking." />
+  <meta name="twitter:image" content="https://andrelaptenok.github.io/redmine-mcp-stdio/assets/og-image.png" />
+
+  <!-- Structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "redmine-mcp-stdio",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "macOS, Linux, Windows",
+    "description": "Open-source Model Context Protocol (stdio) server for Redmine. Read, create and update issues and track time from any MCP client.",
+    "url": "https://andrelaptenok.github.io/redmine-mcp-stdio/",
+    "author": { "@type": "Person", "name": "Andrei Laptsenak" },
+    "license": "https://opensource.org/licenses/MIT",
+    "codeRepository": "https://github.com/andrelaptenok/redmine-mcp-stdio",
+    "programmingLanguage": "TypeScript",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
+
+  <style>
+    :root {
+      --bg:        #0b0d12;
+      --bg-soft:   #11141b;
+      --panel:     #151924;
+      --panel-2:   #1b2130;
+      --border:    #262d3d;
+      --border-2:  #333c50;
+      --text:      #e8ecf4;
+      --muted:     #9aa4b8;
+      --faint:     #6b7488;
+      --accent:    #e5484d;
+      --accent-2:  #ff7a3d;
+      --code:      #cdd6f4;
+      --green:     #3fb950;
+      --radius:    14px;
+      --maxw:      1080px;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+
+    /* ---- Nav ---- */
+    nav {
+      position: sticky; top: 0; z-index: 20;
+      background: rgba(11,13,18,.72);
+      backdrop-filter: saturate(160%) blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    nav .wrap { display: flex; align-items: center; gap: 20px; height: 60px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: -.01em; }
+    .brand .mark { width: 26px; height: 26px; display: block; }
+    nav .links { margin-left: auto; display: flex; gap: 26px; align-items: center; }
+    nav .links a { color: var(--muted); font-size: 14px; font-weight: 500; transition: color .15s; }
+    nav .links a:hover { color: var(--text); }
+    .gh-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 14px; border: 1px solid var(--border-2); border-radius: 10px;
+      color: var(--text) !important; font-size: 14px; font-weight: 600;
+      background: var(--panel); transition: border-color .15s, background .15s;
+    }
+    .gh-btn:hover { border-color: var(--faint); background: var(--panel-2); }
+    @media (max-width: 640px) { nav .links a:not(.gh-btn) { display: none; } }
+
+    /* ---- Hero ---- */
+    header.hero { position: relative; overflow: hidden; padding: 88px 0 72px; }
+    header.hero::before {
+      content: ""; position: absolute; inset: 0;
+      background:
+        radial-gradient(650px 340px at 50% -8%, rgba(229,72,77,.20), transparent 70%),
+        radial-gradient(500px 300px at 88% 10%, rgba(255,122,61,.12), transparent 70%);
+      pointer-events: none;
+    }
+    .hero-inner { position: relative; text-align: center; }
+    .hero-logo { width: 76px; height: 76px; display: block; margin: 0 auto 22px; filter: drop-shadow(0 6px 24px rgba(229,72,77,.35)); }
+    .pill {
+      display: inline-flex; align-items: center;
+      padding: 7px 15px; border: 1px solid var(--border-2); border-radius: 999px;
+      background: var(--panel); color: var(--muted);
+      font-family: var(--mono); font-size: 12.5px; letter-spacing: .02em;
+      margin-bottom: 26px;
+    }
+    .pill .glow {
+      position: relative; width: 8px; height: 8px; border-radius: 50%;
+      background: var(--green); box-shadow: 0 0 8px var(--green); margin-right: 10px;
+    }
+    .pill .glow::after {
+      content: ""; position: absolute; inset: -4px; border-radius: 50%;
+      border: 1px solid var(--green); animation: pulsering 2s ease-out infinite;
+    }
+    .pill .dim { color: var(--faint); }
+    @keyframes pulsering { 0% { transform: scale(.5); opacity: .8; } 100% { transform: scale(2); opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) {
+      .pill .glow::after { animation: none; }
+    }
+    h1 {
+      font-size: clamp(38px, 6vw, 62px); line-height: 1.05; margin: 0 0 20px;
+      letter-spacing: -.035em; font-weight: 800;
+    }
+    h1 .grad {
+      background: linear-gradient(120deg, var(--accent) 10%, var(--accent-2));
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .subtitle { font-size: clamp(17px, 2.4vw, 21px); color: var(--muted); max-width: 620px; margin: 0 auto 36px; }
+    .cta-row { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 30px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 9px;
+      padding: 13px 22px; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer;
+      transition: transform .12s, box-shadow .2s, border-color .15s, background .15s;
+    }
+    .btn:active { transform: translateY(1px); }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #fff; border: none;
+      box-shadow: 0 8px 26px rgba(229,72,77,.35);
+    }
+    .btn-primary:hover { box-shadow: 0 10px 34px rgba(229,72,77,.5); }
+    .btn-ghost { background: var(--panel); color: var(--text); border: 1px solid var(--border-2); }
+    .btn-ghost:hover { border-color: var(--faint); background: var(--panel-2); }
+
+    .badges { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 8px; }
+    .badge {
+      font-family: var(--mono); font-size: 12px; color: var(--muted);
+      border: 1px solid var(--border); border-radius: 7px; padding: 4px 9px; background: var(--bg-soft);
+    }
+
+    /* ---- Install command ---- */
+    .install {
+      display: flex; align-items: flex-start; gap: 12px; max-width: 720px; margin: 34px auto 0;
+      background: var(--bg-soft); border: 1px solid var(--border); border-radius: 12px;
+      padding: 14px 16px; font-family: var(--mono); font-size: 13.5px; text-align: left;
+    }
+    .install .prompt { color: var(--accent); user-select: none; line-height: 1.7; }
+    .install code { color: var(--code); flex: 1; white-space: normal; overflow-wrap: anywhere; line-height: 1.7; }
+    .install .copy { flex: none; margin-top: 1px; }
+
+    /* ---- Sections ---- */
+    section { padding: 64px 0; border-top: 1px solid var(--border); }
+    .eyebrow { color: var(--accent); font-weight: 700; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; }
+    h2 { font-size: clamp(26px, 3.6vw, 36px); letter-spacing: -.025em; margin: 10px 0 12px; font-weight: 750; }
+    .lead { color: var(--muted); max-width: 620px; font-size: 17px; margin: 0 0 40px; }
+
+    /* ---- Feature strip ---- */
+    .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .feature { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; }
+    .feature .ic { font-size: 22px; margin-bottom: 10px; }
+    .feature h3 { margin: 0 0 6px; font-size: 16px; font-weight: 650; }
+    .feature p { margin: 0; color: var(--muted); font-size: 14.5px; }
+    @media (max-width: 760px) { .features { grid-template-columns: 1fr; } }
+
+    /* ---- Tools grid ---- */
+    .tools { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .tool {
+      background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px;
+      transition: border-color .15s, transform .12s, background .15s;
+    }
+    .tool:hover { border-color: var(--border-2); background: var(--panel-2); transform: translateY(-2px); }
+    .tool .name { font-family: var(--mono); font-size: 14.5px; color: var(--text); font-weight: 600; }
+    .tool .name b { color: var(--accent); font-weight: 600; }
+    .tool p { margin: 7px 0 0; color: var(--muted); font-size: 14px; }
+    @media (max-width: 680px) { .tools { grid-template-columns: 1fr; } }
+
+    /* ---- Config tabs ---- */
+    .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+    .tab {
+      padding: 9px 16px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer;
+      background: var(--panel); border: 1px solid var(--border); color: var(--muted); transition: all .15s;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active { background: var(--panel-2); border-color: var(--accent); color: var(--text); }
+    .panel-code { display: none; }
+    .panel-code.active { display: block; }
+
+    .codeblock { position: relative; background: #0d1017; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .codeblock .bar {
+      display: flex; align-items: center;
+      padding: 11px 14px; border-bottom: 1px solid var(--border); background: var(--bg-soft);
+    }
+    /* macOS-style traffic lights, painted with one dot + two box-shadows */
+    .codeblock .bar::before {
+      content: ""; flex: none;
+      width: 12px; height: 12px; border-radius: 50%;
+      background: #ff5f57;
+      box-shadow: 20px 0 0 #febc2e, 40px 0 0 #28c840;
+      margin-right: 48px;
+    }
+    .codeblock .bar .fname { font-family: var(--mono); font-size: 12.5px; color: var(--faint); }
+    .codeblock .bar .copy { margin-left: auto; }
+    .copy {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer;
+      min-width: 82px; box-sizing: border-box;
+      background: var(--panel-2); border: 1px solid var(--border-2); color: var(--muted);
+      font-size: 12px; font-weight: 600; padding: 5px 11px; border-radius: 8px; transition: color .15s, border-color .15s;
+    }
+    .copy:hover { color: var(--text); border-color: var(--faint); }
+    .copy.done { color: var(--green); border-color: var(--green); }
+    pre { margin: 0; padding: 18px; overflow-x: auto; }
+    code, pre { font-family: var(--mono); font-size: 13.5px; line-height: 1.65; color: var(--code); }
+    .tok-key { color: #7ee787; }
+    .tok-str { color: #a5d6ff; }
+    .tok-cmt { color: var(--faint); font-style: italic; }
+    .tok-flag { color: var(--accent-2); }
+
+    .note { margin-top: 16px; font-size: 14px; color: var(--muted); }
+    .note b { color: var(--text); }
+
+    /* ---- Steps ---- */
+    .steps { display: grid; gap: 14px; counter-reset: s; }
+    .step { display: flex; gap: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; }
+    .step .n {
+      counter-increment: s; flex: none; width: 30px; height: 30px; border-radius: 9px;
+      display: grid; place-items: center; font-weight: 700; font-size: 14px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #fff;
+    }
+    .step .n::before { content: counter(s); }
+    .step h3 { margin: 3px 0 4px; font-size: 15.5px; }
+    .step p { margin: 0; color: var(--muted); font-size: 14px; }
+    .step code { background: var(--bg-soft); padding: 1px 6px; border-radius: 5px; font-size: 12.5px; border: 1px solid var(--border); }
+
+    /* ---- Footer ---- */
+    footer { border-top: 1px solid var(--border); padding: 40px 0; color: var(--faint); font-size: 14px; }
+    footer .wrap { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+    footer a { color: var(--muted); }
+    footer a:hover { color: var(--text); }
+
+    .kbd { font-family: var(--mono); font-size: 12px; background: var(--bg-soft); border: 1px solid var(--border); border-radius: 5px; padding: 1px 6px; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="wrap">
+      <a class="brand" href="#top"><img class="mark" src="assets/logo-mark.svg" alt="" width="26" height="26" /> redmine-mcp-stdio</a>
+      <div class="links">
+        <a href="#tools">Tools</a>
+        <a href="#install">Install</a>
+        <a href="#connect">Connect</a>
+        <a class="gh-btn" href="https://github.com/andrelaptenok/redmine-mcp-stdio" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <a id="top"></a>
+  <header class="hero">
+    <div class="wrap hero-inner">
+      <img class="hero-logo" src="assets/logo-mark.svg" alt="redmine-mcp-stdio logo" width="76" height="76" />
+      <span class="pill"><span class="glow"></span>Model Context Protocol <span class="dim">·</span> stdio</span>
+      <h1>Redmine, inside <span class="grad">any MCP client</span></h1>
+      <p class="subtitle">A small local server that connects your AI editor to Redmine, so you can ask Cursor or Claude about a ticket or open a new one without leaving the chat. Works with any MCP client.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#install">Get started</a>
+        <a class="btn btn-ghost" href="https://github.com/andrelaptenok/redmine-mcp-stdio" target="_blank" rel="noopener">View on GitHub</a>
+      </div>
+      <div class="badges">
+        <span class="badge">10 tools</span>
+        <span class="badge">TypeScript</span>
+        <span class="badge">Node ≥ 18</span>
+        <span class="badge">MIT</span>
+        <span class="badge">zero config files</span>
+      </div>
+      <div class="install">
+        <span class="prompt">$</span>
+        <code id="install-cmd">git clone https://github.com/andrelaptenok/redmine-mcp-stdio.git &amp;&amp; cd redmine-mcp-stdio &amp;&amp; npm install &amp;&amp; npm run build</code>
+        <button class="copy" data-copy="git clone https://github.com/andrelaptenok/redmine-mcp-stdio.git && cd redmine-mcp-stdio && npm install && npm run build">Copy</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Why -->
+  <section id="why">
+    <div class="wrap">
+      <span class="eyebrow">Why</span>
+      <h2>Stop switching to the Redmine tab</h2>
+      <p class="lead">A lot of Redmine work is quick lookups and small edits that don't really need the web UI. Hand them to the assistant you already have open.</p>
+      <div class="features">
+        <div class="feature">
+          <div class="ic">🔌</div>
+          <h3>Runs on your machine</h3>
+          <p>One Node file the client launches over stdio. There's no service to host or account to create, and the API key stays local.</p>
+        </div>
+        <div class="feature">
+          <div class="ic">🛡️</div>
+          <h3>Handles the rough edges</h3>
+          <p>Requests time out after 10s and retry on 429s and 5xx. When Redmine rejects something you get the real validation error, not a raw dump.</p>
+        </div>
+        <div class="feature">
+          <div class="ic">⏱️</div>
+          <h3>More than issues</h3>
+          <p>The ten tools also cover paginated search, project versions and members, attachments, and Redmine's time log.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tools -->
+  <section id="tools">
+    <div class="wrap">
+      <span class="eyebrow">Toolbox</span>
+      <h2>Ten tools</h2>
+      <p class="lead">Enough to cover the day-to-day: finding issues, editing them, leaving comments and logging time.</p>
+      <div class="tools">
+        <div class="tool"><span class="name"><b>list_issues</b></span><p>List &amp; filter issues with pagination, free-text search, status and assignee filters.</p></div>
+        <div class="tool"><span class="name"><b>get_issue</b></span><p>Full details of one issue: journal, metadata and attachments.</p></div>
+        <div class="tool"><span class="name"><b>list_projects</b></span><p>Every project you can access, by identifier and name.</p></div>
+        <div class="tool"><span class="name"><b>get_project</b></span><p>Project details together with its versions and members.</p></div>
+        <div class="tool"><span class="name"><b>create_issue</b></span><p>Open a new issue with tracker, priority, assignee and status.</p></div>
+        <div class="tool"><span class="name"><b>update_issue</b></span><p>Change fields, progress or status on an existing issue.</p></div>
+        <div class="tool"><span class="name"><b>add_comment</b></span><p>Post a note to an issue's journal.</p></div>
+        <div class="tool"><span class="name"><b>log_time</b></span><p>Record a time entry against an issue or a project.</p></div>
+        <div class="tool"><span class="name"><b>list_time_entries</b></span><p>Query logged time by issue, project, user or date range.</p></div>
+        <div class="tool"><span class="name"><b>list_enumerations</b></span><p>Ids for trackers, statuses, priorities and time-entry activities.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Install -->
+  <section id="install">
+    <div class="wrap">
+      <span class="eyebrow">Install</span>
+      <h2>Build in three commands</h2>
+      <p class="lead">Requires Node 18+. The build produces <code style="font-family:var(--mono);font-size:14px">build/index.js</code>, the executable server.</p>
+      <div class="codeblock">
+        <div class="bar"><span class="fname">terminal</span>
+          <button class="copy" data-copy="git clone https://github.com/andrelaptenok/redmine-mcp-stdio.git
+cd redmine-mcp-stdio
+npm install
+npm run build
+echo &quot;$(pwd)/build/index.js&quot;   # absolute path for your client config">Copy</button>
+        </div>
+<pre><span class="tok-cmt"># clone &amp; build</span>
+git clone https://github.com/andrelaptenok/redmine-mcp-stdio.git
+cd redmine-mcp-stdio
+npm install
+npm run build
+
+<span class="tok-cmt"># grab the absolute path you'll paste into the client config</span>
+echo <span class="tok-str">"$(pwd)/build/index.js"</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- Connect -->
+  <section id="connect">
+    <div class="wrap">
+      <span class="eyebrow">Connect</span>
+      <h2>Wire it into your client</h2>
+      <p class="lead">The server reads <code style="font-family:var(--mono);font-size:14px">REDMINE_URL</code> and <code style="font-family:var(--mono);font-size:14px">REDMINE_API_KEY</code> from the environment. Pick your client below.</p>
+
+      <div class="tabs">
+        <button class="tab active" data-tab="cur">Cursor</button>
+        <button class="tab" data-tab="vsc">VS Code</button>
+        <button class="tab" data-tab="cc">Claude Code</button>
+        <button class="tab" data-tab="cd">Claude Desktop</button>
+        <button class="tab" data-tab="cx">Codex CLI</button>
+        <button class="tab" data-tab="ws">Windsurf</button>
+        <button class="tab" data-tab="cl">Cline</button>
+        <button class="tab" data-tab="zed">Zed</button>
+        <button class="tab" data-tab="jb">JetBrains AI</button>
+      </div>
+
+      <div class="panel-code active" data-panel="cur">
+        <div class="codeblock">
+          <div class="bar"><span class="fname">~/.cursor/mcp.json</span>
+            <button class="copy" data-copy='{
+  "mcpServers": {
+    "redmine": {
+      "command": "node",
+      "args": ["/absolute/path/to/redmine-mcp-stdio/build/index.js"],
+      "env": {
+        "REDMINE_URL": "https://redmine.your-company.com",
+        "REDMINE_API_KEY": "your_key"
+      }
+    }
+  }
+}'>Copy</button>
+          </div>
+<pre>{
+  <span class="tok-key">"mcpServers"</span>: {
+    <span class="tok-key">"redmine"</span>: {
+      <span class="tok-key">"command"</span>: <span class="tok-str">"node"</span>,
+      <span class="tok-key">"args"</span>: [<span class="tok-str">"/absolute/path/to/redmine-mcp-stdio/build/index.js"</span>],
+      <span class="tok-key">"env"</span>: {
+        <span class="tok-key">"REDMINE_URL"</span>: <span class="tok-str">"https://redmine.your-company.com"</span>,
+        <span class="tok-key">"REDMINE_API_KEY"</span>: <span class="tok-str">"your_key"</span>
+      }
+    }
+  }
+}</pre>
+        </div>
+        <p class="note">Global config, or <code>.cursor/mcp.json</code> in a project root. Same shape as Claude Desktop. Reload Cursor and enable the server in <b>Settings &gt; MCP</b>.</p>
+      </div>
+
+      <div class="panel-code" data-panel="vsc">
+        <div class="codeblock">
+          <div class="bar"><span class="fname">.vscode/mcp.json</span>
+            <button class="copy" data-copy='{
+  "servers": {
+    "redmine": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["/absolute/path/to/redmine-mcp-stdio/build/index.js"],
+      "env": {
+        "REDMINE_URL": "https://redmine.your-company.com",
+        "REDMINE_API_KEY": "your_key"
+      }
+    }
+  }
+}'>Copy</button>
+          </div>
+<pre>{
+  <span class="tok-key">"servers"</span>: {
+    <span class="tok-key">"redmine"</span>: {
+      <span class="tok-key">"type"</span>: <span class="tok-str">"stdio"</span>,
+      <span class="tok-key">"command"</span>: <span class="tok-str">"node"</span>,
+      <span class="tok-key">"args"</span>: [<span class="tok-str">"/absolute/path/to/redmine-mcp-stdio/build/index.js"</span>],
+      <span class="tok-key">"env"</span>: {
+        <span class="tok-key">"REDMINE_URL"</span>: <span class="tok-str">"https://redmine.your-company.com"</span>,
+        <span class="tok-key">"REDMINE_API_KEY"</span>: <span class="tok-str">"your_key"</span>
+      }
+    }
+  }
+}</pre>
+        </div>
+        <p class="note">Note the top-level key is <b>servers</b> (not <code>mcpServers</code>). Used by GitHub Copilot's agent mode. Put it in <code>.vscode/mcp.json</code> for a workspace, or your user <code>mcp.json</code> for all projects.</p>
+      </div>
+
+      <div class="panel-code" data-panel="cc">
+        <div class="codeblock">
+          <div class="bar"><span class="fname">shell</span>
+            <button class="copy" data-copy="claude mcp add redmine \
+  --env REDMINE_URL=https://redmine.your-company.com \
+  --env REDMINE_API_KEY=your_key \
+  -- node /absolute/path/to/redmine-mcp-stdio/build/index.js">Copy</button>
+          </div>
+<pre>claude mcp add redmine <span class="tok-flag">\</span>
+  <span class="tok-flag">--env</span> REDMINE_URL=<span class="tok-str">https://redmine.your-company.com</span> <span class="tok-flag">\</span>
+  <span class="tok-flag">--env</span> REDMINE_API_KEY=<span class="tok-str">your_key</span> <span class="tok-flag">\</span>
+  -- node <span class="tok-str">/absolute/path/to/redmine-mcp-stdio/build/index.js</span></pre>
+        </div>
+      </div>
+
+      <div class="panel-code" data-panel="cd">
+        <div class="codeblock">
+          <div class="bar"><span class="fname">claude_desktop_config.json</span>
+            <button class="copy" data-copy='{
+  "mcpServers": {
+    "redmine": {
+      "command": "node",
+      "args": ["/absolute/path/to/redmine-mcp-stdio/build/index.js"],
+      "env": {
+        "REDMINE_URL": "https://redmine.your-company.com",
+        "REDMINE_API_KEY": "your_key"
+      }
+    }
+  }
+}'>Copy</button>
+          </div>
+<pre>{
+  <span class="tok-key">"mcpServers"</span>: {
+    <span class="tok-key">"redmine"</span>: {
+      <span class="tok-key">"command"</span>: <span class="tok-str">"node"</span>,
+      <span class="tok-key">"args"</span>: [<span class="tok-str">"/absolute/path/to/redmine-mcp-stdio/build/index.js"</span>],
+      <span class="tok-key">"env"</span>: {
+        <span class="tok-key">"REDMINE_URL"</span>: <span class="tok-str">"https://redmine.your-company.com"</span>,
+        <span class="tok-key">"REDMINE_API_KEY"</span>: <span class="tok-str">"your_key"</span>
+      }
+    }
+  }
+}</pre>
+        </div>
+        <p class="note">Config path on macOS: <code>~/Library/Application Support/Claude/claude_desktop_config.json</code>. Restart Claude Desktop afterwards.</p>
+      </div>
+
+      <div class="panel-code" data-panel="cx">
+        <div class="codeblock">
+          <div class="bar"><span class="fname">~/.codex/config.toml</span>
+            <button class="copy" data-copy='[mcp_servers.redmine]
+command = "node"
+args = ["/absolute/path/to/redmine-mcp-stdio/build/index.js"]
+env = { REDMINE_URL = "https://redmine.your-company.com", REDMINE_API_KEY = "your_key" }'>Copy</button>
+          </div>
+<pre>[mcp_servers.redmine]
+<span class="tok-key">command</span> = <span class="tok-str">"node"</span>
+<span class="tok-key">args</span> = [<span class="tok-str">"/absolute/path/to/redmine-mcp-stdio/build/index.js"</span>]
+<span class="tok-key">env</span> = { REDMINE_URL = <span class="tok-str">"https://redmine.your-company.com"</span>, REDMINE_API_KEY = <span class="tok-str">"your_key"</span> }</pre>
+        </div>
+        <p class="note">Add the table to <code>~/.codex/config.toml</code>. If <code>node</code> is installed via nvm, use the full path from <code>which node</code> as <b>command</b>.</p>
+      </div>
+
+      <div class="panel-code" data-panel="ws">
+        <div class="codeblock">
+          <div class="bar"><span class="fname">~/.codeium/windsurf/mcp_config.json</span>
+            <button class="copy" data-copy='{
+  "mcpServers": {
+    "redmine": {
+      "command": "node",
+      "args": ["/absolute/path/to/redmine-mcp-stdio/build/index.js"],
+      "env": {
+        "REDMINE_URL": "https://redmine.your-company.com",
+        "REDMINE_API_KEY": "your_key"
+      }
+    }
+  }
+}'>Copy</button>
+          </div>
+<pre>{
+  <span class="tok-key">"mcpServers"</span>: {
+    <span class="tok-key">"redmine"</span>: {
+      <span class="tok-key">"command"</span>: <span class="tok-str">"node"</span>,
+      <span class="tok-key">"args"</span>: [<span class="tok-str">"/absolute/path/to/redmine-mcp-stdio/build/index.js"</span>],
+      <span class="tok-key">"env"</span>: {
+        <span class="tok-key">"REDMINE_URL"</span>: <span class="tok-str">"https://redmine.your-company.com"</span>,
+        <span class="tok-key">"REDMINE_API_KEY"</span>: <span class="tok-str">"your_key"</span>
+      }
+    }
+  }
+}</pre>
+        </div>
+        <p class="note">In Cascade, open <b>MCP servers &gt; Manage &gt; View raw config</b>, paste, then hit refresh. Supports <code>${env:VAR}</code> interpolation if you'd rather not inline the key.</p>
+      </div>
+
+      <div class="panel-code" data-panel="cl">
+        <div class="codeblock">
+          <div class="bar"><span class="fname">cline_mcp_settings.json</span>
+            <button class="copy" data-copy='{
+  "mcpServers": {
+    "redmine": {
+      "command": "node",
+      "args": ["/absolute/path/to/redmine-mcp-stdio/build/index.js"],
+      "env": {
+        "REDMINE_URL": "https://redmine.your-company.com",
+        "REDMINE_API_KEY": "your_key"
+      }
+    }
+  }
+}'>Copy</button>
+          </div>
+<pre>{
+  <span class="tok-key">"mcpServers"</span>: {
+    <span class="tok-key">"redmine"</span>: {
+      <span class="tok-key">"command"</span>: <span class="tok-str">"node"</span>,
+      <span class="tok-key">"args"</span>: [<span class="tok-str">"/absolute/path/to/redmine-mcp-stdio/build/index.js"</span>],
+      <span class="tok-key">"env"</span>: {
+        <span class="tok-key">"REDMINE_URL"</span>: <span class="tok-str">"https://redmine.your-company.com"</span>,
+        <span class="tok-key">"REDMINE_API_KEY"</span>: <span class="tok-str">"your_key"</span>
+      }
+    }
+  }
+}</pre>
+        </div>
+        <p class="note">In the Cline pane, click the <b>MCP Servers</b> icon and choose <b>Configure MCP Servers</b> to open this file. Same <code>mcpServers</code> shape as Claude Desktop.</p>
+      </div>
+
+      <div class="panel-code" data-panel="zed">
+        <div class="codeblock">
+          <div class="bar"><span class="fname">Zed settings.json</span>
+            <button class="copy" data-copy='{
+  "context_servers": {
+    "redmine": {
+      "source": "custom",
+      "command": "node",
+      "args": ["/absolute/path/to/redmine-mcp-stdio/build/index.js"],
+      "env": {
+        "REDMINE_URL": "https://redmine.your-company.com",
+        "REDMINE_API_KEY": "your_key"
+      }
+    }
+  }
+}'>Copy</button>
+          </div>
+<pre>{
+  <span class="tok-key">"context_servers"</span>: {
+    <span class="tok-key">"redmine"</span>: {
+      <span class="tok-key">"source"</span>: <span class="tok-str">"custom"</span>,
+      <span class="tok-key">"command"</span>: <span class="tok-str">"node"</span>,
+      <span class="tok-key">"args"</span>: [<span class="tok-str">"/absolute/path/to/redmine-mcp-stdio/build/index.js"</span>],
+      <span class="tok-key">"env"</span>: {
+        <span class="tok-key">"REDMINE_URL"</span>: <span class="tok-str">"https://redmine.your-company.com"</span>,
+        <span class="tok-key">"REDMINE_API_KEY"</span>: <span class="tok-str">"your_key"</span>
+      }
+    }
+  }
+}</pre>
+        </div>
+        <p class="note">Zed calls MCP servers <b>context servers</b> and needs <code>"source": "custom"</code>. Open the command palette and run <b>zed: open settings</b>. Zed restarts the server on save, so no editor reload.</p>
+      </div>
+
+      <div class="panel-code" data-panel="jb">
+        <div class="codeblock">
+          <div class="bar"><span class="fname">Settings &gt; Tools &gt; AI Assistant &gt; MCP</span></div>
+<pre><span class="tok-cmt"># Add a server of type: stdio</span>
+Command:      node        <span class="tok-cmt"># nvm users: full path from `which node`</span>
+Arguments:    /absolute/path/to/redmine-mcp-stdio/build/index.js
+Environment:  REDMINE_URL=https://redmine.your-company.com
+              REDMINE_API_KEY=your_key</pre>
+        </div>
+        <p class="note">Enable <b>“Automatically enable new and changed MCP servers”</b>, then Apply. Click the status icon and you should see 10 tools. Invoke them in chat with <span class="kbd">/</span>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- API key -->
+  <section id="apikey">
+    <div class="wrap">
+      <span class="eyebrow">Setup</span>
+      <h2>Get your Redmine API key</h2>
+      <p class="lead">A personal access key authenticates the server. It never leaves your machine.</p>
+      <div class="steps">
+        <div class="step"><span class="n"></span><div><h3>Open your account</h3><p>In Redmine: <b>My account &gt; API access key &gt; Show</b>.</p></div></div>
+        <div class="step"><span class="n"></span><div><h3>No such section?</h3><p>An admin enables the REST API in <b>Administration &gt; Settings &gt; API</b>.</p></div></div>
+        <div class="step"><span class="n"></span><div><h3>Check permissions</h3><p>The key's user needs permission to view issues, plus create and edit for writes.</p></div></div>
+        <div class="step"><span class="n"></span><div><h3>Keep it secret</h3><p>Copy <code>.env.example</code> to <code>.env</code> for local use. <code>.env</code> is gitignored. Never commit the key.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <span>redmine-mcp-stdio · MIT License · built by <a href="https://github.com/andrelaptenok" target="_blank" rel="noopener">Andrei Laptsenak</a></span>
+      <span><a href="https://github.com/andrelaptenok/redmine-mcp-stdio" target="_blank" rel="noopener">GitHub</a> · <a href="https://modelcontextprotocol.io" target="_blank" rel="noopener">About MCP</a></span>
+    </div>
+  </footer>
+
+  <script>
+    // Copy-to-clipboard
+    document.querySelectorAll(".copy").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const text = btn.getAttribute("data-copy");
+        try {
+          await navigator.clipboard.writeText(text);
+          const prev = btn.textContent;
+          btn.textContent = "Copied ✓";
+          btn.classList.add("done");
+          setTimeout(() => { btn.textContent = prev; btn.classList.remove("done"); }, 1600);
+        } catch (e) {
+          btn.textContent = "Press ⌘/Ctrl+C";
+        }
+      });
+    });
+
+    // Config tabs
+    const tabs = document.querySelectorAll(".tab");
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        tabs.forEach((t) => t.classList.remove("active"));
+        tab.classList.add("active");
+        const key = tab.getAttribute("data-tab");
+        document.querySelectorAll(".panel-code").forEach((p) => {
+          p.classList.toggle("active", p.getAttribute("data-panel") === key);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
