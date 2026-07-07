@@ -96,6 +96,12 @@
     nav .wrap { display: flex; align-items: center; gap: 20px; height: 60px; }
     .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: -.01em; }
     .brand .mark { width: 26px; height: 26px; display: block; }
+    .nav-ver {
+      font-family: var(--mono); font-size: 11.5px; color: var(--faint) !important;
+      border: 1px solid var(--border); border-radius: 6px; padding: 2px 7px;
+      transition: border-color .15s, color .15s;
+    }
+    .nav-ver:hover { color: var(--muted) !important; border-color: var(--border-2); }
     nav .links { margin-left: auto; display: flex; gap: 26px; align-items: center; }
     nav .links a { color: var(--muted); font-size: 14px; font-weight: 500; transition: color .15s; }
     nav .links a:hover { color: var(--text); }
@@ -278,6 +284,7 @@
   <nav>
     <div class="wrap">
       <a class="brand" href="#top"><img class="mark" src="assets/logo-mark.svg" alt="" width="26" height="26" /> redmine-mcp-stdio</a>
+      <a class="nav-ver" id="nav-version" href="https://www.npmjs.com/package/redmine-mcp-stdio" target="_blank" rel="noopener" hidden></a>
       <div class="links">
         <a href="#tools">Tools</a>
         <a href="#install">Install</a>
@@ -711,8 +718,14 @@ Environment:  REDMINE_URL=https://redmine.your-company.com
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error("not published"))))
       .then((d) => {
         if (!d || !d.version) return;
-        document.getElementById("npm-version").textContent = "v" + d.version;
+        const v = "v" + d.version;
+        document.getElementById("npm-version").textContent = v;
         document.getElementById("npm-badge").hidden = false;
+        const nav = document.getElementById("nav-version");
+        if (nav) {
+          nav.textContent = v;
+          nav.hidden = false;
+        }
       })
       .catch(() => {});
   </script>
