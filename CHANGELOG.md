@@ -3,6 +3,12 @@
 All notable changes to this project are documented here. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); versioning is [SemVer](https://semver.org/).
 
+## 1.0.2
+
+### Changed
+
+- Added `homepage` (landing page) and `bugs` (issue tracker) links to the npm package.
+
 ## 1.0.1
 
 ### Changed
