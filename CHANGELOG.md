@@ -3,6 +3,13 @@
 All notable changes to this project are documented here. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); versioning is [SemVer](https://semver.org/).
 
+## 1.0.1
+
+### Changed
+
+- Documented client configs now use `npx -y redmine-mcp-stdio` (no clone or build needed).
+- Releases publish to npm via GitHub Actions with trusted publishing (OIDC) and provenance.
+
 ## 1.0.0 (initial release)
 
 ### Added
