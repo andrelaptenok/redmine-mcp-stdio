@@ -168,6 +168,8 @@
       font-family: var(--mono); font-size: 12px; color: var(--muted);
       border: 1px solid var(--border); border-radius: 7px; padding: 4px 9px; background: var(--bg-soft);
     }
+    .badge.npm { color: var(--accent); transition: border-color .15s; }
+    .badge.npm:hover { border-color: var(--accent); }
 
     /* ---- Install command ---- */
     .install {
@@ -300,6 +302,15 @@
         <a class="btn btn-ghost" href="https://github.com/andrelaptenok/redmine-mcp-stdio" target="_blank" rel="noopener">View on GitHub</a>
       </div>
       <div class="badges">
+        <a
+          class="badge npm"
+          id="npm-badge"
+          href="https://www.npmjs.com/package/redmine-mcp-stdio"
+          target="_blank"
+          rel="noopener"
+          hidden
+          >npm <span id="npm-version"></span></a
+        >
         <span class="badge">10 tools</span>
         <span class="badge">TypeScript</span>
         <span class="badge">Node ≥ 20</span>
@@ -698,6 +709,16 @@ Environment:  REDMINE_URL=https://redmine.your-company.com
         });
       });
     });
+
+    // npm version badge (auto-updates once published; stays hidden otherwise)
+    fetch("https://registry.npmjs.org/redmine-mcp-stdio/latest")
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error("not published"))))
+      .then((d) => {
+        if (!d || !d.version) return;
+        document.getElementById("npm-version").textContent = "v" + d.version;
+        document.getElementById("npm-badge").hidden = false;
+      })
+      .catch(() => {});
   </script>
 </body>
 </html>
