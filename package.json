@@ -35,6 +35,8 @@
     "type": "git",
     "url": "https://github.com/andrelaptenok/redmine-mcp-stdio.git"
   },
+  "homepage": "https://andrelaptenok.github.io/redmine-mcp-stdio/",
+  "bugs": "https://github.com/andrelaptenok/redmine-mcp-stdio/issues",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
     "zod": "^3.23.8"
