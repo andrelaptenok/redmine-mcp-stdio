@@ -3,6 +3,20 @@
 All notable changes to this project are documented here. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); versioning is [SemVer](https://semver.org/).
 
+## 1.1.2
+
+### Changed
+
+- Discovery/metadata (no functional changes): broadened npm `keywords` (Cursor,
+  VS Code, Windsurf, Cline, Codex, Zed, JetBrains, stdio, project-management,
+  time-tracking, …) so the package surfaces for more client/use-case searches.
+  Added an npm-downloads badge to the README.
+
+### Added
+
+- `mcpName` field in `package.json` and a `server.json` manifest, so the package
+  can be listed in the official MCP registry (`io.github.andrelaptenok/redmine-mcp-stdio`).
+
 ## 1.1.1
 
 ### Changed
