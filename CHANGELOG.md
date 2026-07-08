@@ -3,15 +3,20 @@
 All notable changes to this project are documented here. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); versioning is [SemVer](https://semver.org/).
 
-## Unreleased
+## 1.1.1
 
 ### Changed
 
 - CI/release (internal, no package changes): the release workflow now skips
   `npm publish` when the version is already in the registry, so re-running a
-  release (e.g. after re-pushing a tag) no longer fails. Bumped
+  release (e.g. after re-running a failed job) no longer fails. Bumped
   `actions/checkout` and `actions/setup-node` to `v5` (Node 24 runtime),
   clearing the Node 20 deprecation warning.
+- CI/release (internal): the publish step now fails loudly if the version is
+  already published but from a different commit than the current run — i.e. the
+  release tag was moved after publishing. Moving a release tag orphans the
+  commit bound to npm provenance and breaks the "source commit" link, so the
+  guard forces a version bump + fresh tag instead of a silent skip.
 
 ## 1.1.0
 

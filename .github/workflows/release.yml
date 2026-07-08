@@ -29,13 +29,26 @@ jobs:
 
       # No NODE_AUTH_TOKEN: npm authenticates via OIDC and attaches provenance.
       # Idempotent: skip if this exact version is already in the registry, so
-      # re-running the workflow (e.g. after re-pushing the tag) doesn't fail.
+      # re-running the workflow (e.g. re-running a failed job) doesn't fail.
+      #
+      # Guard against a MOVED tag: provenance is bound to the commit that was
+      # published. If the version is already in the registry but from a DIFFERENT
+      # commit than this run, the tag was force-moved after publishing — which
+      # orphans the attested commit and breaks the provenance "source commit"
+      # link on npm. Fail loudly instead of silently skipping: bump the version
+      # and cut a fresh tag rather than moving an existing release tag.
       - name: Publish to npm
         run: |
           NAME="$(node -p "require('./package.json').name")"
           VERSION="$(node -p "require('./package.json').version")"
+          HEAD_SHA="$(git rev-parse HEAD)"
           if npm view "${NAME}@${VERSION}" version >/dev/null 2>&1; then
-            echo "::notice::${NAME}@${VERSION} already published — skipping publish."
+            PUBLISHED_SHA="$(npm view "${NAME}@${VERSION}" gitHead 2>/dev/null || true)"
+            if [ -n "${PUBLISHED_SHA}" ] && [ "${PUBLISHED_SHA}" != "${HEAD_SHA}" ]; then
+              echo "::error::${NAME}@${VERSION} was published from ${PUBLISHED_SHA}, but this run is at ${HEAD_SHA}. The release tag was moved after publishing — do not move release tags; bump the version and cut a new tag instead."
+              exit 1
+            fi
+            echo "::notice::${NAME}@${VERSION} already published from this commit — skipping publish."
           else
             npm publish
           fi
