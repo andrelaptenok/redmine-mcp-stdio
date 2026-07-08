@@ -3,7 +3,7 @@ import { z } from "zod";
 import type { RedmineClient } from "../redmine/client.js";
 import type { IssueResponse, IssuesResponse, RedmineIssue } from "../redmine/types.js";
 import { encodeSegment } from "../redmine/paths.js";
-import { MAX_ALL, renderIssueList } from "../format.js";
+import { MAX_ALL, renderIssueList, renderJournals } from "../format.js";
 import { guard, ok, requireBody } from "./helpers.js";
 
 export interface CollectIssuesInput {
@@ -106,12 +106,20 @@ export function registerIssueTools(server: McpServer, client: RedmineClient): vo
 
   server.tool(
     "get_issue",
-    "Get full details of one Redmine issue by id, including attachments",
-    { id: z.number().int().describe("Issue id") },
-    async ({ id }) =>
+    "Get full details of one Redmine issue by id, including attachments and, by default, comments/history (journals)",
+    {
+      id: z.number().int().describe("Issue id"),
+      include_journals: z
+        .boolean()
+        .default(true)
+        .describe("Include comments and field-change history"),
+    },
+    async ({ id, include_journals }) =>
       guard(async () => {
+        const include = ["attachments"];
+        if (include_journals) include.push("journals");
         const data = await client.get<IssueResponse>(`/issues/${encodeSegment(id)}.json`, {
-          include: "journals,attachments",
+          include: include.join(","),
         });
         const i = data.issue;
         const lines = [
@@ -129,6 +137,9 @@ export function registerIssueTools(server: McpServer, client: RedmineClient): vo
           for (const a of i.attachments) {
             lines.push(`  #${a.id} ${a.filename} (${a.filesize} bytes) - ${a.content_url}`);
           }
+        }
+        if (include_journals) {
+          lines.push("", "Comments & history:", "", renderJournals(i.journals ?? []));
         }
         return ok(lines.join("\n"));
       })

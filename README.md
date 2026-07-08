@@ -13,18 +13,18 @@ A local [Model Context Protocol](https://modelcontextprotocol.io) server (stdio)
 
 ## Tools
 
-| Tool                | What it does                                      | Key parameters                                                                                     |
-| ------------------- | ------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| `list_issues`       | List/filter issues, paginated                     | `project_id`, `status_id`, `assigned_to_id`, `query`, `limit`, `offset`, `all`                     |
-| `get_issue`         | Full details of one issue + journal + attachments | `id`                                                                                               |
-| `list_projects`     | Accessible projects                               | `limit`                                                                                            |
-| `get_project`       | Project details, versions and members             | `id`                                                                                               |
-| `create_issue`      | Create an issue                                   | `project_id`, `subject`, `description`, `tracker_id`, `priority_id`, `assigned_to_id`, `status_id` |
-| `update_issue`      | Update issue fields                               | `id` + any of `subject`, `status_id`, `priority_id`, `assigned_to_id`, `done_ratio`, `notes`       |
-| `add_comment`       | Add a note to an issue                            | `id`, `notes`                                                                                      |
-| `log_time`          | Log a time entry on an issue/project              | `issue_id` or `project_id`, `hours`, `activity_id`, `comments`, `spent_on`                         |
-| `list_time_entries` | List time entries, filtered                       | `issue_id`, `project_id`, `user_id`, `from`, `to`, `limit`, `offset`                               |
-| `list_enumerations` | IDs of trackers/statuses/priorities/activities    | none                                                                                               |
+| Tool                | What it does                                               | Key parameters                                                                                     |
+| ------------------- | ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `list_issues`       | List/filter issues, paginated                              | `project_id`, `status_id`, `assigned_to_id`, `query`, `limit`, `offset`, `all`                     |
+| `get_issue`         | Full details of one issue + comments/history + attachments | `id`, `include_journals` (default `true`)                                                          |
+| `list_projects`     | Accessible projects                                        | `limit`                                                                                            |
+| `get_project`       | Project details, versions and members                      | `id`                                                                                               |
+| `create_issue`      | Create an issue                                            | `project_id`, `subject`, `description`, `tracker_id`, `priority_id`, `assigned_to_id`, `status_id` |
+| `update_issue`      | Update issue fields                                        | `id` + any of `subject`, `status_id`, `priority_id`, `assigned_to_id`, `done_ratio`, `notes`       |
+| `add_comment`       | Add a note to an issue                                     | `id`, `notes`                                                                                      |
+| `log_time`          | Log a time entry on an issue/project                       | `issue_id` or `project_id`, `hours`, `activity_id`, `comments`, `spent_on`                         |
+| `list_time_entries` | List time entries, filtered                                | `issue_id`, `project_id`, `user_id`, `from`, `to`, `limit`, `offset`                               |
+| `list_enumerations` | IDs of trackers/statuses/priorities/activities             | none                                                                                               |
 
 ## Install
 

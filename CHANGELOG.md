@@ -3,6 +3,14 @@
 All notable changes to this project are documented here. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); versioning is [SemVer](https://semver.org/).
 
+## 1.1.0
+
+### Added
+
+- `get_issue` now renders comments and field-change history (journals): each entry
+  shows author, timestamp, the note text, and any tracked field changes. Toggle with
+  the new `include_journals` parameter (default `true`).
+
 ## 1.0.2
 
 ### Changed
