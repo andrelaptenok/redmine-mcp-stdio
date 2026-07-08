@@ -3,6 +3,16 @@
 All notable changes to this project are documented here. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); versioning is [SemVer](https://semver.org/).
 
+## Unreleased
+
+### Changed
+
+- CI/release (internal, no package changes): the release workflow now skips
+  `npm publish` when the version is already in the registry, so re-running a
+  release (e.g. after re-pushing a tag) no longer fails. Bumped
+  `actions/checkout` and `actions/setup-node` to `v5` (Node 24 runtime),
+  clearing the Node 20 deprecation warning.
+
 ## 1.1.0
 
 ### Added
