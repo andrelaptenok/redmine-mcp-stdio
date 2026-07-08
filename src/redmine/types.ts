@@ -10,6 +10,22 @@ export interface RedmineAttachment {
   content_url: string;
 }
 
+export interface RedmineJournalDetail {
+  property: string;
+  name: string;
+  old_value?: string | null;
+  new_value?: string | null;
+}
+
+export interface RedmineJournal {
+  id: number;
+  user?: RedmineRef;
+  notes?: string;
+  created_on: string;
+  private_notes?: boolean;
+  details?: RedmineJournalDetail[];
+}
+
 export interface RedmineIssue {
   id: number;
   subject: string;
@@ -23,6 +39,7 @@ export interface RedmineIssue {
   author?: RedmineRef;
   assigned_to?: RedmineRef;
   attachments?: RedmineAttachment[];
+  journals?: RedmineJournal[];
 }
 
 export interface RedmineProject {
