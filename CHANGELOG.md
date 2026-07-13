@@ -3,6 +3,29 @@
 All notable changes to this project are documented here. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); versioning is [SemVer](https://semver.org/).
 
+## 1.2.0
+
+### Added
+
+- `search` tool: server-side full-text search via the Redmine Search API
+  (`/search.json`) — matches issue subjects, descriptions and comments, wiki
+  pages, news and more. Supports project scoping, result-type filters
+  (`types`), `titles_only`, `open_issues` and pagination. Unlike the `query`
+  parameter of `list_issues` (subject substring only), this searches the whole
+  text server-side.
+- `get_current_user` tool: resolves the account behind the configured API key
+  (numeric id, login, name), so clients can answer "my issues" style questions
+  and assign work without guessing user ids.
+- MCP tool annotations on every tool (`readOnlyHint`, `destructiveHint`,
+  `idempotentHint`, `openWorldHint`) plus human-friendly titles. Clients that
+  honor annotations can auto-approve the read-only tools instead of prompting
+  on every call.
+
+### Changed
+
+- Tool registration migrated from the deprecated `server.tool()` to
+  `server.registerTool()` (MCP SDK). No changes to tool names or parameters.
+
 ## 1.1.2
 
 ### Changed

@@ -71,23 +71,29 @@ export async function collectIssues(
 }
 
 export function registerIssueTools(server: McpServer, client: RedmineClient): void {
-  server.tool(
+  server.registerTool(
     "list_issues",
-    "List Redmine issues with optional filters and pagination",
     {
-      project_id: z.string().optional().describe("Project identifier or numeric id"),
-      status_id: z.string().optional().describe("open, closed, * or a status id"),
-      assigned_to_id: z.string().optional().describe("User id or 'me'"),
-      query: z
-        .string()
-        .optional()
-        .describe(`Free-text search in subject; scans up to ${MAX_ALL} matching issues`),
-      limit: z.number().int().min(1).max(100).default(25),
-      offset: z.number().int().min(0).default(0).describe("Number of issues to skip"),
-      all: z
-        .boolean()
-        .default(false)
-        .describe(`Fetch every matching issue (up to ${MAX_ALL}), ignoring limit/offset`),
+      title: "List issues",
+      description: "List Redmine issues with optional filters and pagination",
+      inputSchema: {
+        project_id: z.string().optional().describe("Project identifier or numeric id"),
+        status_id: z.string().optional().describe("open, closed, * or a status id"),
+        assigned_to_id: z.string().optional().describe("User id or 'me'"),
+        query: z
+          .string()
+          .optional()
+          .describe(
+            `Substring match in subject only; scans up to ${MAX_ALL} issues. For full-text search (descriptions, comments, wiki) use the search tool`
+          ),
+        limit: z.number().int().min(1).max(100).default(25),
+        offset: z.number().int().min(0).default(0).describe("Number of issues to skip"),
+        all: z
+          .boolean()
+          .default(false)
+          .describe(`Fetch every matching issue (up to ${MAX_ALL}), ignoring limit/offset`),
+      },
+      annotations: { readOnlyHint: true, openWorldHint: false },
     },
     async ({ project_id, status_id, assigned_to_id, query, limit, offset, all }) =>
       guard(async () => {
@@ -104,15 +110,20 @@ export function registerIssueTools(server: McpServer, client: RedmineClient): vo
       })
   );
 
-  server.tool(
+  server.registerTool(
     "get_issue",
-    "Get full details of one Redmine issue by id, including attachments and, by default, comments/history (journals)",
     {
-      id: z.number().int().describe("Issue id"),
-      include_journals: z
-        .boolean()
-        .default(true)
-        .describe("Include comments and field-change history"),
+      title: "Get issue",
+      description:
+        "Get full details of one Redmine issue by id, including attachments and, by default, comments/history (journals)",
+      inputSchema: {
+        id: z.number().int().describe("Issue id"),
+        include_journals: z
+          .boolean()
+          .default(true)
+          .describe("Include comments and field-change history"),
+      },
+      annotations: { readOnlyHint: true, openWorldHint: false },
     },
     async ({ id, include_journals }) =>
       guard(async () => {
@@ -145,17 +156,26 @@ export function registerIssueTools(server: McpServer, client: RedmineClient): vo
       })
   );
 
-  server.tool(
+  server.registerTool(
     "create_issue",
-    "Create a new Redmine issue",
     {
-      project_id: z.union([z.string(), z.number()]).describe("Project identifier or numeric id"),
-      subject: z.string().describe("Issue title"),
-      description: z.string().optional(),
-      tracker_id: z.number().int().optional(),
-      priority_id: z.number().int().optional(),
-      assigned_to_id: z.number().int().optional(),
-      status_id: z.number().int().optional(),
+      title: "Create issue",
+      description: "Create a new Redmine issue",
+      inputSchema: {
+        project_id: z.union([z.string(), z.number()]).describe("Project identifier or numeric id"),
+        subject: z.string().describe("Issue title"),
+        description: z.string().optional(),
+        tracker_id: z.number().int().optional(),
+        priority_id: z.number().int().optional(),
+        assigned_to_id: z.number().int().optional(),
+        status_id: z.number().int().optional(),
+      },
+      annotations: {
+        readOnlyHint: false,
+        destructiveHint: false,
+        idempotentHint: false,
+        openWorldHint: false,
+      },
     },
     async (args) =>
       guard(async () => {
@@ -168,18 +188,27 @@ export function registerIssueTools(server: McpServer, client: RedmineClient): vo
       })
   );
 
-  server.tool(
+  server.registerTool(
     "update_issue",
-    "Update fields of an existing Redmine issue",
     {
-      id: z.number().int().describe("Issue id to update"),
-      subject: z.string().optional(),
-      description: z.string().optional(),
-      status_id: z.number().int().optional(),
-      priority_id: z.number().int().optional(),
-      assigned_to_id: z.number().int().optional(),
-      done_ratio: z.number().int().min(0).max(100).optional(),
-      notes: z.string().optional().describe("Comment added to the issue journal"),
+      title: "Update issue",
+      description: "Update fields of an existing Redmine issue",
+      inputSchema: {
+        id: z.number().int().describe("Issue id to update"),
+        subject: z.string().optional(),
+        description: z.string().optional(),
+        status_id: z.number().int().optional(),
+        priority_id: z.number().int().optional(),
+        assigned_to_id: z.number().int().optional(),
+        done_ratio: z.number().int().min(0).max(100).optional(),
+        notes: z.string().optional().describe("Comment added to the issue journal"),
+      },
+      annotations: {
+        readOnlyHint: false,
+        destructiveHint: true,
+        idempotentHint: false,
+        openWorldHint: false,
+      },
     },
     async ({ id, ...fields }) =>
       guard(async () => {
@@ -188,10 +217,19 @@ export function registerIssueTools(server: McpServer, client: RedmineClient): vo
       })
   );
 
-  server.tool(
+  server.registerTool(
     "add_comment",
-    "Add a comment (note) to a Redmine issue",
-    { id: z.number().int(), notes: z.string() },
+    {
+      title: "Add comment",
+      description: "Add a comment (note) to a Redmine issue",
+      inputSchema: { id: z.number().int(), notes: z.string() },
+      annotations: {
+        readOnlyHint: false,
+        destructiveHint: false,
+        idempotentHint: false,
+        openWorldHint: false,
+      },
+    },
     async ({ id, notes }) =>
       guard(async () => {
         await client.put(`/issues/${encodeSegment(id)}.json`, { issue: { notes } });

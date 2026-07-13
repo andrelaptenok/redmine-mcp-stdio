@@ -4,10 +4,14 @@ import { registerIssueTools } from "./issues.js";
 import { registerProjectTools } from "./projects.js";
 import { registerTimeEntryTools } from "./time-entries.js";
 import { registerEnumerationTools } from "./enumerations.js";
+import { registerSearchTools } from "./search.js";
+import { registerUserTools } from "./users.js";
 
 export function registerTools(server: McpServer, client: RedmineClient): void {
   registerIssueTools(server, client);
   registerProjectTools(server, client);
   registerTimeEntryTools(server, client);
   registerEnumerationTools(server, client);
+  registerSearchTools(server, client);
+  registerUserTools(server, client);
 }

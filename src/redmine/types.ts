@@ -79,6 +79,26 @@ export interface RedmineTimeEntry {
   project?: RedmineRef;
 }
 
+export interface RedmineSearchResult {
+  id: number;
+  title: string;
+  type: string;
+  url: string;
+  description?: string;
+  datetime?: string;
+}
+
+export interface RedmineUser {
+  id: number;
+  login: string;
+  firstname: string;
+  lastname: string;
+  mail?: string;
+  admin?: boolean;
+  created_on?: string;
+  last_login_on?: string;
+}
+
 export interface Paginated {
   total_count: number;
   offset: number;
@@ -108,6 +128,12 @@ export interface TimeEntriesResponse extends Paginated {
 }
 export interface TimeEntryResponse {
   time_entry: RedmineTimeEntry;
+}
+export interface SearchResponse extends Paginated {
+  results: RedmineSearchResult[];
+}
+export interface UserResponse {
+  user: RedmineUser;
 }
 export interface StatusesResponse {
   issue_statuses: RedmineRef[];

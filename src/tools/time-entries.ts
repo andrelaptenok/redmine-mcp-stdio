@@ -5,19 +5,28 @@ import type { TimeEntriesResponse, TimeEntryResponse } from "../redmine/types.js
 import { guard, ok, fail, requireBody } from "./helpers.js";
 
 export function registerTimeEntryTools(server: McpServer, client: RedmineClient): void {
-  server.tool(
+  server.registerTool(
     "log_time",
-    "Log a time entry against an issue or a project",
     {
-      issue_id: z.number().int().optional().describe("Issue to log against"),
-      project_id: z
-        .union([z.string(), z.number()])
-        .optional()
-        .describe("Project to log against (if no issue_id)"),
-      hours: z.number().positive().describe("Hours spent"),
-      activity_id: z.number().int().optional().describe("Time entry activity id"),
-      comments: z.string().optional(),
-      spent_on: z.string().optional().describe("Date YYYY-MM-DD (defaults to today)"),
+      title: "Log time",
+      description: "Log a time entry against an issue or a project",
+      inputSchema: {
+        issue_id: z.number().int().optional().describe("Issue to log against"),
+        project_id: z
+          .union([z.string(), z.number()])
+          .optional()
+          .describe("Project to log against (if no issue_id)"),
+        hours: z.number().positive().describe("Hours spent"),
+        activity_id: z.number().int().optional().describe("Time entry activity id"),
+        comments: z.string().optional(),
+        spent_on: z.string().optional().describe("Date YYYY-MM-DD (defaults to today)"),
+      },
+      annotations: {
+        readOnlyHint: false,
+        destructiveHint: false,
+        idempotentHint: false,
+        openWorldHint: false,
+      },
     },
     async ({ issue_id, project_id, hours, activity_id, comments, spent_on }) =>
       guard(async () => {
@@ -45,17 +54,21 @@ export function registerTimeEntryTools(server: McpServer, client: RedmineClient)
       })
   );
 
-  server.tool(
+  server.registerTool(
     "list_time_entries",
-    "List time entries, filtered by issue, project, user or date range",
     {
-      issue_id: z.number().int().optional(),
-      project_id: z.union([z.string(), z.number()]).optional(),
-      user_id: z.union([z.string(), z.number()]).optional().describe("User id or 'me'"),
-      from: z.string().optional().describe("Start date YYYY-MM-DD"),
-      to: z.string().optional().describe("End date YYYY-MM-DD"),
-      limit: z.number().int().min(1).max(100).default(25),
-      offset: z.number().int().min(0).default(0),
+      title: "List time entries",
+      description: "List time entries, filtered by issue, project, user or date range",
+      inputSchema: {
+        issue_id: z.number().int().optional(),
+        project_id: z.union([z.string(), z.number()]).optional(),
+        user_id: z.union([z.string(), z.number()]).optional().describe("User id or 'me'"),
+        from: z.string().optional().describe("Start date YYYY-MM-DD"),
+        to: z.string().optional().describe("End date YYYY-MM-DD"),
+        limit: z.number().int().min(1).max(100).default(25),
+        offset: z.number().int().min(0).default(0),
+      },
+      annotations: { readOnlyHint: true, openWorldHint: false },
     },
     async ({ issue_id, project_id, user_id, from, to, limit, offset }) =>
       guard(async () => {

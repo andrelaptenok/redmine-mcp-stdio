@@ -13,10 +13,14 @@ const formatRefs = (refs: RedmineRef[]): string =>
   refs.map((r) => `  ${r.id} - ${r.name}`).join("\n");
 
 export function registerEnumerationTools(server: McpServer, client: RedmineClient): void {
-  server.tool(
+  server.registerTool(
     "list_enumerations",
-    "List trackers, statuses, priorities and time-entry activities with their IDs",
-    {},
+    {
+      title: "List enumerations",
+      description: "List trackers, statuses, priorities and time-entry activities with their IDs",
+      inputSchema: {},
+      annotations: { readOnlyHint: true, openWorldHint: false },
+    },
     async () =>
       guard(async () => {
         const [statuses, priorities, trackers, activities] = await Promise.all([

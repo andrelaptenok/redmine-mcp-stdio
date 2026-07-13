@@ -1,4 +1,9 @@
-import type { RedmineIssue, RedmineJournal, RedmineJournalDetail } from "./redmine/types.js";
+import type {
+  RedmineIssue,
+  RedmineJournal,
+  RedmineJournalDetail,
+  RedmineSearchResult,
+} from "./redmine/types.js";
 
 export const MAX_ALL = 500;
 
@@ -27,6 +32,26 @@ export function renderIssueList(issues: RedmineIssue[], meta: IssueListMeta): st
   }
 
   return rows.length ? `${header}\n\n${rows.join("\n")}` : header;
+}
+
+export interface SearchResultsMeta {
+  query: string;
+  total: number;
+  from: number;
+}
+
+export function renderSearchResults(
+  results: RedmineSearchResult[],
+  meta: SearchResultsMeta
+): string {
+  if (results.length === 0) return `No results for "${meta.query}".`;
+
+  const rows = results.map((r) => {
+    const snippet = r.description?.trim() ? `\n  ${r.description.trim().split("\n")[0]}` : "";
+    return `[${r.type}] ${r.title}${r.datetime ? ` (${r.datetime})` : ""}\n  ${r.url}${snippet}`;
+  });
+  const header = `Showing ${meta.from + 1}-${meta.from + results.length} of ${meta.total} for "${meta.query}".`;
+  return `${header}\n\n${rows.join("\n\n")}`;
 }
 
 function describeDetail(d: RedmineJournalDetail): string {

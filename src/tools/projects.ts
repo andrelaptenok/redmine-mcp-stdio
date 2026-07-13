@@ -11,10 +11,14 @@ import { safeProjectId } from "../redmine/paths.js";
 import { guard, ok } from "./helpers.js";
 
 export function registerProjectTools(server: McpServer, client: RedmineClient): void {
-  server.tool(
+  server.registerTool(
     "list_projects",
-    "List accessible Redmine projects",
-    { limit: z.number().int().min(1).max(100).default(50) },
+    {
+      title: "List projects",
+      description: "List accessible Redmine projects",
+      inputSchema: { limit: z.number().int().min(1).max(100).default(50) },
+      annotations: { readOnlyHint: true, openWorldHint: false },
+    },
     async ({ limit }) =>
       guard(async () => {
         const data = await client.get<ProjectsResponse>("/projects.json", { limit });
@@ -23,10 +27,14 @@ export function registerProjectTools(server: McpServer, client: RedmineClient): 
       })
   );
 
-  server.tool(
+  server.registerTool(
     "get_project",
-    "Get a project's details, versions and members",
-    { id: z.string().describe("Project identifier or numeric id") },
+    {
+      title: "Get project",
+      description: "Get a project's details, versions and members",
+      inputSchema: { id: z.string().describe("Project identifier or numeric id") },
+      annotations: { readOnlyHint: true, openWorldHint: false },
+    },
     async ({ id }) =>
       guard(async () => {
         const pid = safeProjectId(id);

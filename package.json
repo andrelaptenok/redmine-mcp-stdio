@@ -1,6 +1,6 @@
 {
   "name": "redmine-mcp-stdio",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "mcpName": "io.github.andrelaptenok/redmine-mcp-stdio",
   "description": "Local MCP (stdio) server for Redmine. Work with issues, projects and time entries from any MCP client.",
   "type": "module",

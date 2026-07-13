@@ -25,6 +25,10 @@ A local [Model Context Protocol](https://modelcontextprotocol.io) server (stdio)
 | `log_time`          | Log a time entry on an issue/project                       | `issue_id` or `project_id`, `hours`, `activity_id`, `comments`, `spent_on`                         |
 | `list_time_entries` | List time entries, filtered                                | `issue_id`, `project_id`, `user_id`, `from`, `to`, `limit`, `offset`                               |
 | `list_enumerations` | IDs of trackers/statuses/priorities/activities             | none                                                                                               |
+| `search`            | Full-text search (issues, wiki, news, …)                   | `q`, `project_id`, `types`, `titles_only`, `open_issues`, `limit`, `offset`                        |
+| `get_current_user`  | Account behind the API key (id, login, name)               | none                                                                                               |
+
+Every tool ships MCP [tool annotations](https://modelcontextprotocol.io/specification/2025-06-18/server/tools#tool-annotations) (`readOnlyHint`, `destructiveHint`, …), so clients can auto-approve read-only calls.
 
 ## Install
 
@@ -206,7 +210,7 @@ Zed restarts the server on save, so no editor reload is needed.
   - `REDMINE_URL=https://redmine.your-company.com`
   - `REDMINE_API_KEY=your_key`
 
-Enable _"Automatically enable new and changed MCP servers"_, then **Apply**. Click the status icon and you should see 10 tools. Invoke them in chat with `/`.
+Enable _"Automatically enable new and changed MCP servers"_, then **Apply**. Click the status icon and you should see 12 tools. Invoke them in chat with `/`.
 
 ## Verify locally (optional)
 
@@ -253,6 +257,8 @@ src/
     projects.ts       list/get projects (versions, members)
     time-entries.ts   log_time, list_time_entries
     enumerations.ts   trackers / statuses / priorities / activities
+    search.ts         full-text search across issues, wiki, news, ...
+    users.ts          get_current_user
     helpers.ts        guard(), ok()/fail(), ToolResult
   format.ts           pure presentation helpers
 ```
